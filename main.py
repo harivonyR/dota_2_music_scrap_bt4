@@ -6,6 +6,7 @@ Created on Fri Dec  8 16:25:24 2023
 """
 ######################################################
 
+import os
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 import requests
@@ -15,8 +16,14 @@ def download_audio(url, destination):
     try:
         response = requests.get(url, stream=True)
 
-        # Assurez-vous que la requête a réussi (statut 200)
+        # check status
         response.raise_for_status()
+
+        # create directory if doesn't exist
+        destination_folder = os.path.dirname(destination)
+        
+        if not os.path.exists(destination_folder):
+            os.makedirs(destination_folder)
 
         with open(destination, 'wb') as file:
             for chunk in response.iter_content(chunk_size=8192):
@@ -25,11 +32,6 @@ def download_audio(url, destination):
         print(f"Le fichier audio a été téléchargé avec succès dans {destination}")
     except requests.exceptions.RequestException as e:
         print(f"Erreur lors du téléchargement : {e}")
-
-# Exemple d'utilisation
-
-
-
 
 ######################################################
 
@@ -57,12 +59,8 @@ links = driver.execute_script(javascript_select_links)
 filtered_links = [link for link in links if ":"  not in link.rsplit("/", 1)[-1]]
 
 
-
-#links
-
-
 """
-GET secondary link
+GET secondary (sounds) links
 
 """
 
